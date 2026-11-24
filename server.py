@@ -9,8 +9,8 @@ starts empty; the gateway loads and unloads parts through its /admin routes,
 and each base is loaded once, from its own MLflow mirror, when its first part
 comes, and dropped when its last part goes.
 
-    POST /admin/parts           {"model_id": ...}  load a part
-    POST /admin/parts/unload    {"model_id": ...}  unload a part
+    POST /admin/models           {"model_id": ...}  load a part
+    POST /admin/models/unload    {"model_id": ...}  unload a part
     GET  /v1/models                                the parts loaded
     POST /v1/heads              {"model": ..., ...} a part's answer; the rest
                                                    of the body is its kind's request
@@ -135,7 +135,7 @@ def models():
         for model_id in sorted(parts)]}
 
 
-@app.post("/admin/parts")
+@app.post("/admin/models")
 def admin_load(body: dict):
     from meepserve import PartError
     model_id = body.get("model_id")
@@ -148,7 +148,7 @@ def admin_load(body: dict):
         raise HTTPException(409, str(e))
 
 
-@app.post("/admin/parts/unload")
+@app.post("/admin/models/unload")
 def admin_unload(body: dict):
     with lock:
         return unload_part(body.get("model_id", ""))

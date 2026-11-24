@@ -14,8 +14,8 @@ adapters, not three encoders.
 
 | Route | What it does |
 |---|---|
-| `POST /admin/parts` `{"model_id"}` | Loads a part: the latest MLflow version of the model, and its base from the base's own MLflow mirror when no part on it is loaded yet |
-| `POST /admin/parts/unload` `{"model_id"}` | Unloads a part; the last part on a base drops the base |
+| `POST /admin/models` `{"model_id"}` | Loads a part: the latest MLflow version of the model, and its base from the base's own MLflow mirror when no part on it is loaded yet |
+| `POST /admin/models/unload` `{"model_id"}` | Unloads a part; the last part on a base drops the base |
 | `GET /v1/models` | The parts loaded |
 | `POST /v1/heads` | A part's answer: the body names the model, and the rest of it is the part's request |
 | `GET /health` | |
