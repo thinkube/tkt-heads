@@ -1,0 +1,40 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: MIT
+
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  # The application's version; the generated app starts at it.
+  version: "0.1.0"
+
+spec:
+  deployment:
+    type: component
+    name: heads
+    replicas: 0
+    # The LLM gateway creates one pod per node when a part is loaded there, so
+    # resting at zero replicas is idle rather than disabled.
+    gateway_managed: true
+
+  # The LLM gateway serves trained parts on a base model (models of the task
+  # heads) on this component: one pod per node holds each base once and every
+  # part loaded on it, loaded and unloaded through the pod's /admin routes.
+  llm_backend:
+    type: heads
+    display_name: Trained heads
+    container: inference
+    driver: shared-pod
+    tier: performance
+
+  containers:
+    - name: inference
+      build: .
+      port: 8000
+      size: xlarge
+      gpu:
+        count: 1
+        memory: "8Gi"
+      health: /health
+      startupSeconds: 600
+      test:
+        enabled: false

@@ -1,0 +1,14 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: MIT
+
+apiVersion: thinkube.io/v1
+kind: TemplateManifest
+metadata:
+  name: tkt-heads
+  title: Trained Heads Server
+  description: Trained parts on a base model (taggers, choice heads), many on one copy of their base — models managed by LLM Gateway
+  version: 1.0.0
+  author: Alejandro Martínez Corriá
+  tags: ["ai", "transformers", "adapters", "tagger", "gpu"]
+
+parameters: []
