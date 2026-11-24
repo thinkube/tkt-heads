@@ -3,4 +3,4 @@ fastapi==0.142.4
 uvicorn==0.54.0
 httpx==0.28.1
 # Trained parts on a base model, from Meep²'s serving package at a commit
-meepserve @ https://github.com/thinkube/meepsquared/archive/b6a82e41340452e3d4d5a37a99695815b8faa190.tar.gz#subdirectory=serve
+meepserve @ https://github.com/thinkube/meepsquared/archive/0bf38615fd8546f9933e18f61a637a353dee1d0c.tar.gz#subdirectory=serve
