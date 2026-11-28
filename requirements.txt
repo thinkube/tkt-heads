@@ -1,6 +1,10 @@
-transformers==5.19.0
+# The version Meep²'s trainings run, so a part reads its base as it was trained
+transformers==5.20.2
 fastapi==0.142.4
 uvicorn==0.54.0
 httpx==0.28.1
+# The choice kind: the LoRA adapter (the PEFT version Meep²'s choice parts are saved with) and the base's 4-bit weights
+peft==0.21.2
+bitsandbytes==0.50.2
 # Trained parts on a base model, from Meep²'s serving package at a commit
-meepserve @ https://github.com/thinkube/meepsquared/archive/0bf38615fd8546f9933e18f61a637a353dee1d0c.tar.gz#subdirectory=serve
+meepserve[choice] @ https://github.com/thinkube/meepsquared/archive/c97d3fc91e9a443542641ac0dd2360d5b0a8d8dd.tar.gz#subdirectory=serve
