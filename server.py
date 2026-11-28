@@ -14,6 +14,7 @@ comes, and dropped when its last part goes.
     GET  /v1/models                                the parts loaded
     POST /v1/heads              {"model": ..., ...} a part's answer; the rest
                                                    of the body is its kind's request
+    POST /v1/chat/completions   {"model": ..., ...} a generator's chat completion
     GET  /health
 
 Requests are answered one at a time: the parts of a base switch its adapters.
@@ -167,6 +168,23 @@ def heads(body: dict):
             raise HTTPException(404, f"{name} is not loaded here; loaded: {sorted(parts)}")
         try:
             return part.answer(body)
+        except PartError as e:
+            raise HTTPException(400, str(e))
+
+
+@app.post("/v1/chat/completions")
+def chat(body: dict):
+    """A generator part's chat completion (meepserve's generator kind), on the base its engine holds."""
+    from meepserve import PartError
+    name = body.get("model", "")
+    with lock:
+        part = parts.get(name)
+        if part is None:
+            raise HTTPException(404, f"{name} is not loaded here; loaded: {sorted(parts)}")
+        if not hasattr(part, "chat"):
+            raise HTTPException(400, f"{name} is not a generator: it answers POST /v1/heads")
+        try:
+            return part.chat(body)
         except PartError as e:
             raise HTTPException(400, str(e))
 
