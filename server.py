@@ -17,9 +17,11 @@ comes, and dropped when its last part goes.
     POST /v1/chat/completions   {"model": ..., ...} a generator's chat completion
     GET  /health
 
-Requests are answered one at a time: the parts of a base switch its adapters.
+A part on an engine that switches its adapters per request (the taggers' transformers engine) is answered one
+request at a time; a part on meepserve's vllm engine takes requests at once, and the engine runs them in batches.
 """
 
+import contextlib
 import gc
 import os
 import sys
@@ -158,14 +160,22 @@ def admin_unload(body: dict):
         return unload_part(body.get("model_id", ""))
 
 
-@app.post("/v1/heads")
-def heads(body: dict):
-    from meepserve import PartError
-    name = body.get("model", "")
+def serving(name: str):
+    """The part `name`, and the lock its request is answered under: none for an engine that batches its callers'
+    requests itself (meepserve's vllm engine), the server's for one that switches its adapters per request."""
     with lock:
         part = parts.get(name)
         if part is None:
             raise HTTPException(404, f"{name} is not loaded here; loaded: {sorted(parts)}")
+    concurrent = getattr(getattr(part, "engine", None), "concurrent", False)
+    return part, (contextlib.nullcontext() if concurrent else lock)
+
+
+@app.post("/v1/heads")
+def heads(body: dict):
+    from meepserve import PartError
+    part, held = serving(body.get("model", ""))
+    with held:
         try:
             return part.answer(body)
         except PartError as e:
@@ -177,12 +187,10 @@ def chat(body: dict):
     """A generator part's chat completion (meepserve's generator kind), on the base its engine holds."""
     from meepserve import PartError
     name = body.get("model", "")
-    with lock:
-        part = parts.get(name)
-        if part is None:
-            raise HTTPException(404, f"{name} is not loaded here; loaded: {sorted(parts)}")
-        if not hasattr(part, "chat"):
-            raise HTTPException(400, f"{name} is not a generator: it answers POST /v1/heads")
+    part, held = serving(name)
+    if not hasattr(part, "chat"):
+        raise HTTPException(400, f"{name} is not a generator: it answers POST /v1/heads")
+    with held:
         try:
             return part.chat(body)
         except PartError as e:
