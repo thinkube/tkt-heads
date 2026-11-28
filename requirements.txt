@@ -6,4 +6,4 @@ peft==0.21.2
 bitsandbytes==0.50.2
 vllm-bnb-plugin==0.0.3
 # Trained parts on a base model, from Meep²'s serving package at a commit
-meepserve[choice] @ https://github.com/thinkube/meepsquared/archive/7ab791a5f003e2020b00db0cb92ee7e4d88082fb.tar.gz#subdirectory=serve
+meepserve[choice] @ https://github.com/thinkube/meepsquared/archive/5ff7b874dfcb4b9888463848b7ffa381eac34c09.tar.gz#subdirectory=serve
