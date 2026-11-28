@@ -1,11 +1,9 @@
-# The version Meep²'s trainings run, so a part reads its base as it was trained
-transformers==5.20.2
-fastapi==0.142.4
-uvicorn==0.54.0
+# Transformers, FastAPI, uvicorn and Accelerate come with the vLLM base, in the versions vLLM 0.32 takes
 httpx==0.28.1
-# The choice kind: the LoRA adapter (the PEFT version Meep²'s choice parts are saved with) and the base's 4-bit weights, placed on the GPU by Accelerate
+# The choice kind: the LoRA adapter (the PEFT version Meep²'s choice parts are saved with) and the base's 4-bit
+# weights; the bitsandbytes plugin quantizes them as vLLM loads the base
 peft==0.21.2
 bitsandbytes==0.50.2
-accelerate==1.15.0
+vllm-bnb-plugin==0.0.3
 # Trained parts on a base model, from Meep²'s serving package at a commit
-meepserve[choice] @ https://github.com/thinkube/meepsquared/archive/6c65300cab49248b6ed60b80862525f79ac15680.tar.gz#subdirectory=serve
+meepserve[choice] @ https://github.com/thinkube/meepsquared/archive/c86450bd9c76b645795d419c3ce88478efdc3764.tar.gz#subdirectory=serve

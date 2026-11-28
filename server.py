@@ -101,7 +101,10 @@ def load_part(model_id: str) -> dict:
 
 
 def drop_engine(base: str) -> None:
-    del engines[base]
+    engine = engines.pop(base)
+    if hasattr(engine, "close"):
+        engine.close()
+    del engine
     gc.collect()
     torch.cuda.empty_cache()
 
